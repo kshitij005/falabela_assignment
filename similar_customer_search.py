@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.sparse import csr_matrix
 from sklearn.neighbors import NearestNeighbors
 
-df = pd.read_csv(r"G:\reco_assignment_training.csv")
+df = pd.read_csv(r"reco_assignment_training.csv")
 
 features_df=df.pivot_table(index='Customer_num',columns='Product_num',values='Tran_qty').fillna(0)
 
