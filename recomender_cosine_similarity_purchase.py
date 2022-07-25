@@ -4,29 +4,34 @@ from scipy.sparse import coo_matrix, csr_matrix
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import LabelEncoder
 
+# read train dataset using pandas
 data = pd.read_csv(r"reco_assignment_training.csv")
 
+# take 'Product_num', 'Tran_qty', 'Customer_num' col
 DataPrep = data[['Product_num', 'Tran_qty', 'Customer_num']]
 
+#to see what product items have been purchased by what Customer
 DataGrouped = DataPrep.groupby(['Customer_num', 'Product_num']).sum().reset_index()
 
+# our collaborative filtering will be based on binary data. For every dataset we will add a 1 as purchased
 def create_DataBinary(DataGrouped):
     DataBinary = DataGrouped.copy()
     DataBinary['PurchasedYes'] = 1
     return DataBinary
 DataBinary = create_DataBinary(DataGrouped)
 
+# get rid of Tran_qty col
 purchase_data=DataBinary.drop(['Tran_qty'], axis=1)
 
-purchase_data['Product_num'].astype(str)
-
-
-
+# Function that calculate the Item-Item cosine similarity
 def GetItemItemSim(user_ids, product_ids):
     SalesItemCustomerMatrix = csr_matrix(([1]*len(user_ids), (product_ids, user_ids)))
     similarity = cosine_similarity(SalesItemCustomerMatrix)
     return similarity, SalesItemCustomerMatrix
 
+"""Receiving the top 3 SalesItem recommendations per Customer in a dataframe,
+ we will use the Item-Item Similarity Matrix from above function via creating 
+ a SalesItemCustomerMatrixs (product_num per rows and Customer as columns filled binary incidence)."""
 def get_recommendations_from_similarity(similarity_matrix, SalesItemCustomerMatrix, top_n=3):
     CustomerSalesItemMatrix = csr_matrix(SalesItemCustomerMatrix.T)
     CustomerSalesItemScores = CustomerSalesItemMatrix.dot(similarity_matrix) # sum of similarities to all purchased products
@@ -44,6 +49,7 @@ def get_recommendations_from_similarity(similarity_matrix, SalesItemCustomerMatr
         RecForCust.append(recommendations)
     return pd.concat(RecForCust)
 
+# get recommendations
 def get_recommendations(purchase_data):
     user_label_encoder = LabelEncoder()
     user_ids = user_label_encoder.fit_transform(purchase_data.Customer_num)
@@ -58,6 +64,6 @@ def get_recommendations(purchase_data):
     return recommendations
 
 recommendations = get_recommendations(purchase_data)
-dfrec = recommendations
-dfrec.to_excel("ExportCustomerName-Itemname.xlsx")
+dfrec = recommendations #recommendations dataframe
+dfrec.to_excel("3_purchase_recommendation_scikit.xlsx")
 
