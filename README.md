@@ -8,6 +8,8 @@
 
 (here we use cosine similarity to find similar customer on the basis of similar item purchase history as we only had purchase history in our dataset)
 
+*check similar_customer_data.csv for the results.*
+
 **2. To find next 3 Purchase:**
 
 (To recommend purchase item we have content-based filtering and collaborative filtering approach,
@@ -55,6 +57,7 @@ Therefore By looking at the recall I choose Cosine Similarity on Purchase Dummy 
 
 **I have calculated the recall on the test holdout which is approx 0.11**
 
+*check next_3_recommendation.csv for results*
 
 these model were created using turicreate python library.
 
@@ -65,5 +68,7 @@ Using same Insight's I have calculated the similarity matrix through scikit-lear
 *run : recomender_cosine_similarity_purchase.py*
 
 **On the basis of predicted recommendations Recall is approx 0.29 on the given test holdout.**
+
+*check 3_purchase_recommendation_scikit.xlsx for the reults*
 
 Thsese are my analysis and the insights for given dataset.
